@@ -1,0 +1,39 @@
+// AreaTriangulo.cpp : Defines the entry point for the console application.
+//
+
+// Autor: Andres Eguez Rojas
+// Fecha: 15 de Febrero 2017
+
+// Declarar librerias
+#include "stdafx.h"  //Libreria del Visual C++ stdio
+#include <iostream>  // Entrada y salida cin, cout
+#include "conio.h"   //Para manejar la entrada y getch()
+
+
+// Declara el teclado y el monitor como la salida y entrada estandard
+using namespace std;
+
+// El cuerpo principal del programa
+void main()
+{
+   float area,base,altura; // Declaración de variables
+   // Ingreso de datos con mensaje y solicitud de datos
+   cout<<"Ingrese base: "; //Equivale a printf
+   cin>>base;              //Equivale a scanf
+   if (base<=0)
+	   cout<<"Por favor ingresa un dato mayor a 0";
+   else
+   {
+	   cout<<"Ingrese altura: ";
+	   cin>>altura;
+	   if (altura<=0)
+		   cout<<"Por favor ingresa un dato mayor a 0";
+	   else
+	   {
+		   area=(base*altura)/2;
+           // Salida de la respuesta o resultado
+           cout<<"El area es: "<<area;
+	   }
+   }
+   getch(); // Detiene la pantalla
+ }
