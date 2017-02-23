@@ -1,0 +1,34 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include "math.h"
+
+using namespace std;
+
+void main ()
+{
+	float a,b,c,x1,x2,i,j,h,k;
+    cout<<"para la ecuacion: ax^2+bx+c=0" <<endl;
+    cout<<"ingrese el valode de a: ";
+    cin>> a;
+    cout<< "ingrese el valode de b: ";
+    cin>> b;
+    cout<< "ingrese el valor de c: ";
+    cin>> c;
+    h=((b*b)-(4*a*c));
+    i= sqrt ( h ) ;
+    j= i-b;
+    x1=j/(2*a);
+    k=-i-b;
+    x2=k/(2*a);
+    if (h<0)
+        cout<< "la ecuacion no tiene solucion real. ";
+    else
+    {
+        cout<< "los resultados son: "<<endl;
+        cout<< "x1= " << x1 << endl;
+        cout<< "x2= " << x2 << endl;
+
+    }
+    getch();
+}
