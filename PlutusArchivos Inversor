@@ -1,0 +1,198 @@
+#include "stdafx.h"
+#include "conio.h"
+
+#include <iostream>
+#include <stdio.h>
+#include "stdlib.h"
+#include <string>
+
+using namespace std;
+
+
+// struct Producto {
+//   int id;
+//   string descrip;
+//   int cantidad;
+//   float precio;
+//   char garantia;
+// };
+
+void ALTA_SECUENCIAL(void);
+void LISTADO_SECUENCIAL(void);
+
+int main ()
+{
+  // float precio;
+  // int id, cantidad;
+  // string PRODUCTO;
+  // string descrip;
+  // string proyectos;
+
+  // FILE *pf;
+  // pf = fopen("texto.txt", "w");
+
+  // for (int a = 1; a <= 10; a++)
+  // {
+  //   printf("Ingrese un proyecto para guardar en un archivo n: ");
+  //   cin >> proyectos;
+  //   fprintf(pf, "%snn", proyectos.c_str());
+  // }
+
+  // fclose(pf);
+
+  return 0;
+}
+
+struct inversor {
+  int id;
+  string nombre;
+  string nacionalidad;
+  string email;
+  int telefono;
+  string genero;
+};
+
+FILE *ptr_inversor;
+inversor registro_inversor;
+
+void AlTA_SECUENCIAL(void)
+{   
+    int id;// Variable local para el numero de producto 
+    // clrscr(); 
+    cout << "\n\rALTAS DE registro_inversorS DE PROYECTOS"; 
+    ptr_inversor = fopen("INVERSOR.SEC","rb+"); // Intenta abrir el archivo  
+                                     // en modo de lectura/escritura 
+    if(ptr_inversor == NULL) 
+    ptr_inversor = fopen("INVERSOR.SEC","wb"); // Crea el archivo en caso de no 
+                                      // existir 
+    cout << "\n\n\n\r Numero de proyecto: "; 
+    cin >> id; 
+
+    fread(&registro_inversor, sizeof(registro_inversor), 1, ptr_inversor); 
+    // Lee el "registro_inversor", de tamano=sizeof(registro_inversor) del archivo "ptr_inversor" 
+    while(!feof(ptr_inversor)) // Ciclo mientras no se encuentre el final del archivo 
+    { 
+      if(registro_inversor.id == id) 
+      { 
+         cout << "\n\n\n\rregistro_inversor duplicado !!!"; 
+         fclose(ptr_inversor); 
+         getchar(); 
+         return; 
+      } 
+      fread(&registro_inversor, sizeof(registro_inversor), 1, ptr_inversor); 
+    } 
+    
+    cout << "\n\r Nombre: "; 
+    cin.ignore();
+    getline(cin, registro_inversor.nombre); 
+
+    cout << "\n\r nacionalidad   : "; 
+    cin >> registro_inversor.nacionalidad; 
+
+    cout << "\n\r Email     : "; 
+    cin >> registro_inversor.email; 
+
+    cout << "\n\r Telefono     : "; 
+    cin >> registro_inversor.telefono; 
+
+    cout << "\n\r Genero     : "; 
+    cin >> registro_inversor.genero; 
+
+    registro_inversor.id = id; 
+    fwrite(&registro_inversor, sizeof(registro_inversor), 1, ptr_inversor); // Grabar el registro_inversor  
+    fclose(ptr_inversor); // Cierra el archivo 
+
+    cout << "\n\n\n\r Inversor registrado !!!"; 
+    cout << "\n\r<<< Oprima cualquier tecla para continuar >>>"; 
+
+    getchar(); 
+    return; 
+}
+
+
+void LISTADO_SECUENCIAL(void) 
+{
+    system("cls");
+
+  cout << "\n\rLISTADO DE registro_inversorS DE PRODUCTOS"; 
+  ptr_inversor = fopen("INVERSOR.SEC","rb"); // Intenta abrir el archivo INVERSOR.SEC; 
+                           // en modo de solo lectura 
+  if(ptr_inversor == NULL) 
+  { 
+    cout << "\n\n\n\rNo existe el archivo !!!"; 
+    cout << "\n\r<<< Oprima cualquier tecla para continuar >>>"; 
+    getchar(); 
+    return; 
+  } 
+   cout << "\n\r ID     nombre  Nacionalidad    email  telefono    genero"; 
+   cout << "\n\r------------------------------------------------------------------------"; 
+   fread(&registro_inversor, sizeof(registro_inversor), 1, ptr_inversor); 
+  
+  // Lee el "registro_inversor", de tamano=sizeof(registro_inversor) del archivo "ptr_inversor"
+  while(!feof(ptr_inversor)) // Ciclo mientras no se encuentre el final del archivo 
+  { 
+    //printf("\n\r%3d\t%30s\t%3d\t\t$%4.2f\t%c", registro_inversor.id, registro_inversor.nombre, registro_inversor.cantidad, registro_inversor.precio, registro_inversor.garantia); 
+    cout << registro_inversor.nombre <<registro_inversor.nacionalidad << registro_inversor.email << registro_inversor.telefono << registro_inversor.genero;
+    fread(&registro_inversor, sizeof(registro_inversor), 1, ptr_inversor); 
+  } 
+
+  fclose(ptr_inversor); // Cierra el archivo 
+
+  cout << "\n\r------------------------------------------------------------------------"; 
+  cout << "\n\r Fin del listado !!!"; 
+  cout << "\n\r <<< Oprima cualquier tecla para continuar >>>"; 
+
+  getchar(); 
+  return; 
+}
+
+void CONSULTA_SECUENCIAL(void)
+{
+  int id;
+  //clrscr();
+
+  cout << "\n\rCONSULTA DE registro_inversorS DE PRODUCTOS";
+  ptr_inversor = fopen("INVERSOR.SEC","rb"); // Intenta abrir el archivo INVERSOR.SEC
+  
+  if(ptr_inversor == NULL)
+  {
+    // en modo de solo lectura
+    cout << "\n\n\n\rNo existe el archivo !!!";
+    cout << "\n\r<<< Oprima cualquier tecla para continuar >>>";
+    getchar();
+    return;
+  }
+  
+  cout << "\n\n\n\r id inversor: "; 
+  cin >> id;
+
+  fread(&registro_inversor, sizeof(registro_inversor), 1, ptr_inversor);
+
+  // Lee el "registro_inversor", de tamano=sizeof(registro_inversor) del archivo "ptr_inversor"
+  while(!feof(ptr_inversor))
+  {
+    if(registro_inversor.id == id)
+    {
+      cout << "\n\r ID     nombre  Nacionalidad    email  telefono    genero"; 
+    
+      cout << "\n\r------------------------------------------------------ ------------------";
+      //printf("\n\r%3d\t%30s\t%3d\t\t$%4.2f\t%c", registro_inversor.id, registro_inversor.descrip.c_str(), registro_inversor.cantidad, registro_inversor.precio, registro_inversor.garantia);
+      cout << registro_inversor.nombre <<registro_inversor.nacionalidad << registro_inversor.email << registro_inversor.telefono << registro_inversor.genero;
+
+      fclose(ptr_inversor);
+      cout << "\n\r<<< Oprima cualquier tecla para continuar >>>";
+      getchar();
+      return;
+    }
+    fread(&registro_inversor, sizeof(registro_inversor), 1, ptr_inversor);
+  }
+
+  cout << "\n\rNo se encuentra ese registro_inversor !!!";
+  
+  fclose(ptr_inversor); // Cierra el archivo
+  
+  cout << "\n\r<<< Oprima cualquier tecla para continuar >>>";
+
+  getchar();
+  return;
+}
