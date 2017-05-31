@@ -1,0 +1,193 @@
+#include "stdafx.h"
+#include "conio.h"
+
+#include <iostream>
+#include <stdio.h>
+#include "stdlib.h"
+#include <string>
+
+using namespace std;
+
+void ALTA_SECUENCIAL(void);
+void LISTADO_SECUENCIAL(void);
+void CONSULTA_SECUENCIAL(void);
+
+int main ()
+{
+  //   float precio;
+  //   int id, cantidad;
+  //   string PRODUCTO;
+  //   string descrip;
+  // string proyectos;
+
+  //   FILE *pf;
+  // pf = fopen("texto.txt", "w");
+
+  //   for (int a = 1; a <= 10; a++)
+  //   {
+  //   printf("Ingrese un proyecto para guardar en un archivo n: ");
+  //   cin >> proyectos;
+  //   fprintf(pf, "%snn", proyectos.c_str());
+  // }
+
+  // fclose(pf);
+
+  return 0;
+}
+
+struct inversion {
+  int id;
+  int id_proyecto;
+  int id_inversor;
+  float inversion;
+  float ganancia_fee;
+};
+
+FILE *ptr_inversion;
+inversion registro_inversion;
+
+void AlTA_SECUENCIAL(void)
+{   
+    int id;// Variable local para el numero de producto 
+    // clrscr(); 
+    cout << "\n\rALTAS DE registro DE PROYECTOS"; 
+    ptr_inversion = fopen("INVERSION.SEC","rb+"); // Intenta abrir el archivo  
+                                     // en modo de lectura/escritura 
+    if(ptr_inversion == NULL) 
+    ptr_inversion = fopen("INVERSION.SEC","wb"); // Crea el archivo en caso de no 
+                                      // existir 
+    cout << "\n\n\n\r Numero de inversion: "; 
+    cin >> id; 
+
+    fread(&registro_inversion, sizeof(registro_inversion), 1, ptr_inversion); 
+    // Lee el "registro_inversion", de tamano=sizeof(registro_inversion) del archivo "ptr_inversion" 
+    while(!feof(ptr_inversion)) // Ciclo mientras no se encuentre el final del archivo 
+    { 
+      if(registro_inversion.id == id) 
+      { 
+         cout << "\n\n\n\rregistro_inversion duplicado !!!"; 
+         fclose(ptr_inversion); 
+         getchar(); 
+         return; 
+      } 
+      fread(&registro_inversion, sizeof(registro_inversion), 1, ptr_inversion); 
+    } 
+    
+
+    cout << "\n\r id_proyecto: "; 
+    cin >> registro_inversion.id_proyecto; 
+
+    cout << "\n\r id_inversor: "; 
+    cin >> registro_inversion.id_inversor; 
+
+    cout << "\n\r inversion: "; 
+    cin >> registro_inversion.inversion; 
+
+    // ganancia del 5% 
+    registro_inversion.ganancia_fee = registro_inversion.inversion * 0.05;
+
+    registro_inversion.id = id; 
+    fwrite(&registro_inversion, sizeof(registro_inversion), 1, ptr_inversion); // Grabar el registro_inversion  
+    fclose(ptr_inversion); // Cierra el archivo 
+
+    cout << "\n\n\n\r Inversion registrada !!!"; 
+    cout << "\n\r<<< Oprima cualquier tecla para continuar >>>"; 
+
+    getchar(); 
+    return; 
+}
+
+void LISTADO_SECUENCIAL(void) 
+{
+    system("cls");
+
+  cout << "\n\rLISTADO DE registro_inversionS DE PRODUCTOS"; 
+  ptr_inversion = fopen("INVERSION.SEC","rb"); // Intenta abrir el archivo INVERSION.SEC; 
+                           // en modo de solo lectura 
+  if(ptr_inversion == NULL) 
+  { 
+    cout << "\n\n\n\rNo existe el archivo !!!"; 
+    cout << "\n\r<<< Oprima cualquier tecla para continuar >>>"; 
+    getchar(); 
+    return; 
+  } 
+   cout << "\n\rNo Prod                    Descripcion  Cantidad        Precio  Garantia"; 
+   cout << "\n\r------------------------------------------------------------------------"; 
+   fread(&registro_inversion, sizeof(registro_inversion), 1, ptr_inversion); 
+  
+  // Lee el "registro_inversion", de tamano=sizeof(registro_inversion) del archivo "ptr_inversion"
+  while(!feof(ptr_inversion)) // Ciclo mientras no se encuentre el final del archivo 
+  { 
+    //printf("\n\r%3d\t%30s\t%3d\t\t$%4.2f\t%c", registro_inversion.id, registro_inversion.descrip.c_str(), registro_inversion.cantidad, registro_inversion.precio, registro_inversion.garantia); 
+    
+    cout << registro_inversion.id_proyecto << registro_inversion.id_inversor << registro_inversion.inversion << registro_inversion.ganancia_fee << endl;
+    fread(&registro_inversion, sizeof(registro_inversion), 1, ptr_inversion); 
+  } 
+
+  fclose(ptr_inversion); // Cierra el archivo 
+
+  cout << "\n\r------------------------------------------------------------------------"; 
+  cout << "\n\r Fin del listado !!!"; 
+  cout << "\n\r <<< Oprima cualquier tecla para continuar >>>"; 
+
+  getchar(); 
+  return; 
+}
+
+  // int id_proyecto;
+  // int id_inversor;
+  // float inversion;
+  // float ganancia_fee;
+
+void CONSULTA_SECUENCIAL(void)
+{
+  int id;
+  //clrscr();
+
+  cout << "\n\rCONSULTA DE registro_inversionS DE PRODUCTOS";
+  ptr_inversion = fopen("INVERSION.SEC","rb"); // Intenta abrir el archivo INVERSION.SEC
+  
+  if(ptr_inversion == NULL)
+  {
+    // en modo de solo lectura
+    cout << "\n\n\n\rNo existe el archivo !!!";
+    cout << "\n\r<<< Oprima cualquier tecla para continuar >>>";
+    getchar();
+    return;
+  }
+  
+  cout << "\n\n\n\r Numero de producto: "; 
+  cin >> id;
+
+  fread(&registro_inversion, sizeof(registro_inversion), 1, ptr_inversion);
+
+  // Lee el "registro_inversion", de tamano=sizeof(registro_inversion) del archivo "ptr_inversion"
+  while(!feof(ptr_inversion))
+  {
+    if(registro_inversion.id == id)
+    {
+      cout << "\n\rNo Prod       Descripcion  Cantidad Precio    Garantia";
+    
+      cout << "\n\r------------------------------------------------------ ------------------";
+      //printf("\n\r%3d\t%30s\t%3d\t\t$%4.2f\t%c", registro_inversion.id, registro_inversion.descrip.c_str(), registro_inversion.cantidad, registro_inversion.precio, registro_inversion.garantia);
+      cout << registro_inversion.id_proyecto << registro_inversion.id_inversor << registro_inversion.inversion << registro_inversion.ganancia_fee << endl;
+
+      fclose(ptr_inversion);
+      cout << "\n\r<<< Oprima cualquier tecla para continuar >>>";
+      getchar();
+      return;
+    }
+    fread(&registro_inversion, sizeof(registro_inversion), 1, ptr_inversion);
+  }
+
+  cout << "\n\rNo se encuentra ese registro_inversion !!!";
+  
+  fclose(ptr_inversion); // Cierra el archivo
+  
+  cout << "\n\r<<< Oprima cualquier tecla para continuar >>>";
+
+  getchar();
+  return;
+}
+
+
