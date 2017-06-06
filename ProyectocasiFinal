@@ -1,0 +1,1713 @@
+#include "stdafx.h"
+#include <iostream>
+#include <string>
+#include <stdio.h>
+#include <iomanip>
+
+using namespace std;
+
+struct inversor {
+  int id;           // linkeado a inversor actual
+  string nombre;
+  string nacionalidad;
+  string email;
+  int telefono;
+  string genero;
+  bool eliminado;
+};
+
+struct proyecto {
+  int id; 
+  string nombre;
+  string categoria;
+  string descripcion;
+  float objetivo;
+  float acumulado;
+  bool eliminado;
+};
+
+struct inversion {
+    int id;             // ligado al inversionista / usuario_actual
+    int id_proyecto; 
+    int id_inversor;
+    float monto_inversion;
+    float ganancia;
+    bool eliminado;
+};
+
+struct usuario {
+    // string nombre
+    int id;              // linkeado a su proyecto pls
+    string login;
+    string password;
+    int tipo_usurio;     // inversionista ,, emprendedor, administrador
+    bool eliminado;
+};
+
+void adicinar_inversor ();
+void listar_archivo_inversor();
+int obtener_posicion_inversor(int id) ;
+void modificar_archivo_inversor (int id);
+void eliminar_logico_archivo_inversor(int id);
+void consultar_archivo_inversor(int id);
+
+void adicinar_proyecto ();
+void listar_archivo_proyecto();
+int obtener_tam_proyecto() ;
+void modificar_archivo_proyecto (int id);
+void eliminar_logico_archivo_proyecto(int id);
+void consultar_archivo_proyecto(int id);
+bool existe_proyecto(int id);
+
+void adicinar_inversion ();
+void listar_archivo_inversion();
+void listar_archivo_inversion(int id);
+int obtener_posicion_inversion(int id) ;
+void modificar_archivo_inversion (int id);
+void eliminar_logico_archivo_inversion(int id);
+void consultar_archivo_inversion(int id);
+
+void adicinar_usuario ();
+void listar_archivo_usuario();
+int obtener_posicion_usuario(int id) ;
+void modificar_archivo_usuario (int id);
+void eliminar_logico_archivo_usuario(int id);
+void consultar_archivo_usuario(int id);
+bool existe_usuario(string login);
+//string consultar_nombre_usuario(int id);
+
+void login();
+
+void menu_inversor();
+void menu_proyecto();
+void menu_inversion();
+void menu_usuario();
+
+void menu_inversionista();
+void menu_emprendedor();
+void menu_admin();
+
+// void usuario_emprendedor();
+// void usuario_inversor();
+// void usuario_admin();
+
+usuario usuario_actual;
+bool usuario_logeado;
+
+int main()  {
+    int op;
+
+    do
+    {   
+        usuario_logeado = false;
+
+        cout << "1. Login" << endl;
+        cout << "2. Signup" << endl;
+        cout << "0. Salir" << endl << endl;
+
+        cin >> op;
+
+        switch (op) {
+            case 1:
+                login();
+
+                if (usuario_logeado) {
+                    switch(usuario_actual.tipo_usurio) {
+                        case 1:             // inversionista
+                            cout << "Tipo de cuenta: Inversionista" << endl << endl;
+                            menu_inversionista();  // ver proyector para invertir
+                            break;
+                        case 2:             // emprendedor
+                            menu_emprendedor();
+                            break;
+                        case 3:            // administrador
+                            menu_admin();
+                            break;
+                    }
+                }
+
+                break; 
+
+            case 2:
+                adicinar_usuario();
+                break;
+
+            default:
+                break;
+        }
+
+    } while (op != 0); // 0 para salir
+
+    return 0;
+}
+
+void menu_admin () 
+{
+    int op, id;
+    do
+    {
+        cout << "1. Ver proyectos" << endl;
+        cout << "2. Ver detalle de proyecto" << endl;
+        cout << "3. Ver usuarios" << endl;
+        cout << "4. Listar todas las inversiones" << endl;
+        cout << "0. Salir" << endl << endl;
+
+        cin >> op;
+
+        switch (op) {
+            case 1:
+                listar_archivo_proyecto();
+                break; 
+
+            case 2:
+                int id;
+                cout << "Que proyecto desea consultar? " << endl;
+                cin >> id;
+                consultar_archivo_proyecto(id);
+                break;
+
+            case 3:
+                listar_archivo_usuario();
+                break;
+
+            case 4: 
+                listar_archivo_inversion();
+                break;
+
+            case 5:
+                cout << "que inversion desea eliminar? : ";
+                cin >> id;
+                eliminar_logico_archivo_usuario(id);
+                break;
+
+            case 6:
+                cout << "Esta seguro que desea eliminar esta cuenta? [Y, N] ";
+
+                char c;
+                cin >> c;
+                if (c == 'y')
+                {
+                    eliminar_logico_archivo_usuario(usuario_actual.id);
+                    op = 0;
+                }
+                break;
+
+            case 7: 
+                consultar_archivo_usuario(usuario_actual.id);
+                break;
+
+            default:
+                break;
+        }
+
+    } while (op != 0); // 0 para salir
+}
+
+void menu_emprendedor () {
+    int op, id;
+    do
+    {
+        cout << "1. Ver proyectos" << endl;
+        cout << "2. Ver detalle de proyecto" << endl;
+        cout << "3. Adicionar proyecto" << endl;
+
+        cout << "4. Eliminar este usuario" << endl;
+        cout << "5. detalles de cuenta" << endl;
+        cout << "0. Salir" << endl << endl;
+
+        cin >> op;
+
+        switch (op) {
+            case 1:
+                listar_archivo_proyecto();
+                break; 
+
+            case 2:
+                int id;
+                cout << "Que proyecto desea consultar? " << endl;
+                cin >> id;
+                consultar_archivo_proyecto(id);
+                break;
+
+            case 3:
+                adicinar_proyecto();
+                break;
+
+
+            case 4:
+                cout << "Esta seguro que desea eliminar esta cuenta? [Y, N] ";
+
+                char c;
+                cin >> c;
+                if (c == 'y')
+                {
+                    eliminar_logico_archivo_usuario(usuario_actual.id);
+                    op = 0;
+                }
+                break;
+
+            case 5: 
+                consultar_archivo_usuario(usuario_actual.id);
+                break;
+
+            default:
+                break;
+        }
+
+    } while (op != 0); // 0 para salir
+}
+
+void menu_inversionista () {
+    int op, id;
+    do
+    {
+        cout << "1. Listar proyectos" << endl;
+        cout << "2. Ver detalle de proyecto" << endl;
+
+        cout << "3. Realizar inversion" << endl;
+        cout << "4. Listar de mis inversiones" << endl;
+
+        cout << "5. Eliminar usuario" << endl;
+        cout << "6. Detalles de usuario" << endl;
+        cout << "0. Salir" << endl << endl;
+
+        cin >> op;
+
+        switch (op) {
+            case 1:
+                listar_archivo_proyecto();
+                break; 
+
+            case 2:
+                int id;
+                cout << "Que proyecto desea consultar? " << endl;
+                cin >> id;
+                consultar_archivo_proyecto(id);
+                break;
+
+            case 3:
+                adicinar_inversion();
+                break;
+
+            case 4:
+                listar_archivo_inversion(usuario_actual.id);
+                break;
+
+            // case 5:
+            //     // listar_archivo_usuario();
+            //     cout << "que  id de inversion desea modificar del archivo inversion? : ";
+            //     cin >> id;
+            //     modificar_archivo_inversion(id);
+            //     break;
+
+
+            case 5:
+                cout << "Esta seguro que desea eliminar esta cuenta? [Y, N] ";
+
+                char c;
+                cin >> c;
+                if (c == 'y')
+                {
+                    eliminar_logico_archivo_usuario(usuario_actual.id);
+                    op = 0;
+                }
+                break;
+
+            case 6: 
+                consultar_archivo_usuario(usuario_actual.id);
+                break;
+
+            default:
+                break;
+        }
+
+    } while (op != 0); // 0 para salir
+}
+
+void login() {
+    string pass;
+    cout << "user name: ";
+    cin >> usuario_actual.login;
+
+    cout << endl << "password: " ;
+    cin >> usuario_actual.password;
+
+    // ingresar a usuario
+
+    usuario_logeado = false;
+
+    FILE *ptr;
+    usuario reg;
+
+    ptr = fopen("usuario.dat", "rb"); 
+
+    if (ptr == NULL)  {
+        cout << "El archivo no existe" << endl;
+    }
+    else {    
+        fread(&reg, sizeof(reg), 1, ptr);
+        while ( !feof(ptr) ) 
+        { 
+            if (reg.login == usuario_actual.login && reg.password == usuario_actual.password)
+            {
+                usuario_logeado = true;
+                usuario_actual.id = reg.id;
+                usuario_actual.tipo_usurio = reg.tipo_usurio;
+
+
+                cout << endl << "Acceso Exitoso" << endl;
+                cout << "Bienvenido a Plutus Investus " << usuario_actual.login << "!" << endl;
+            }
+           fread(&reg, sizeof(reg), 1, ptr);
+        }
+        fclose(ptr);
+    }
+
+    if (!usuario_logeado) {
+        cout << "Usuario no encontrado" << endl;
+    }
+}
+
+void menu_usuario () {
+    int op, id;
+    do
+    {
+        cout << "1. Adicionar usuario" << endl;
+        cout << "2. Listar usuarios" << endl;
+        cout << "3. modificar usuario actual" << endl;
+        cout << "4. Eliminar cuenta" << endl;
+        cout << "5. consultar usuaio" << endl;
+        cout << "0. Salir" << endl;
+
+        cin >> op;
+
+        switch (op) {
+            case 1:
+                adicinar_usuario();
+                break; 
+
+            case 2:
+                listar_archivo_usuario();
+                break;
+
+            case 3:
+                listar_archivo_usuario();
+                cout << "que  id de inversion desea modificar del archivo inversion? : ";
+                cin >> id;
+
+                modificar_archivo_usuario(id);
+                break;
+
+            case 4:
+                cout << "queinversordesea eliminar? : ";
+                cin >> id;
+                eliminar_logico_archivo_usuario(id);
+                break;
+
+            case 5:
+                cout << "que id inversor desea consultar del archivo inversor? : ";
+                cin >> id;
+                consultar_archivo_usuario(id);
+                break;
+
+            default:
+                break;
+        }
+
+    } while (op != 0); // 0 para salir
+}
+
+void menu_inversion() {
+    int op, id;
+    do
+    {
+        cout << "1. Adicionar inversion" << endl;
+        cout << "2. Listar inversiones" << endl;
+        cout << "3. modificar inversion" << endl;
+        cout << "4. Eliminar inversion" << endl;
+        cout << "5. consultar inversion" << endl;
+        cout << "0. Salir" << endl;
+
+        cin >> op;
+
+        switch (op) {
+            case 1:
+                adicinar_inversion();
+                break; 
+
+            case 2:
+                listar_archivo_inversion();
+                break;
+
+            case 3:
+                listar_archivo_inversion();
+                
+                cout << "que  id de inversion desea modificar del archivo inversion? : ";
+                cin >> id;
+
+                modificar_archivo_inversion(id);
+                break;
+
+            case 4:
+                cout << "queinversordesea eliminar? : ";
+                cin >> id;
+                eliminar_logico_archivo_inversion(id);
+                break;
+
+            case 5:
+                cout << "que id inversor desea consultar del archivo inversor? : ";
+                cin >> id;
+                consultar_archivo_inversion(id);
+                break;
+
+            default:
+                break;
+        }
+
+    } while (op != 0); // 0 para salir
+}
+
+void menu_proyecto() {
+    int op, id;
+
+    do
+    {
+        cout << "1. Adicionar proyecto" << endl;
+        cout << "2. Listar archivo proyecto" << endl;
+        cout << "3. modificar archivo proyecto" << endl;
+        cout << "4. Eliminar " << endl;
+        cout << "5. consultar archivo proyecto" << endl;
+        cout << "0. Salir" << endl;
+
+        cin >> op;
+
+        switch (op) {
+            case 1:
+                adicinar_proyecto();
+                break; 
+
+            case 2:
+                listar_archivo_proyecto();
+                break;
+
+            case 3:
+                listar_archivo_proyecto();
+                
+                cout << "que  id de inversor desea modificar del archivo proyecto? : ";
+                cin >> id;
+
+                modificar_archivo_proyecto(id);
+                break;
+
+            case 4:
+                cout << "queinversordesea eliminar? : ";
+                cin >> id;
+                eliminar_logico_archivo_proyecto(id);
+                break;
+
+            case 5:
+                cout << "que id inversor desea consultar del archivo proyecto? : ";
+                cin >> id;
+                consultar_archivo_proyecto(id);
+                break;
+
+            default:
+                break;
+        }
+
+    } while (op != 0); // 0 para salir
+}
+
+
+void menu_inversor() {
+        int op, id;
+
+    do
+    {
+        cout << "1. Adicionar inversor" << endl;
+        cout << "2. Listar archivo inversor" << endl;
+        cout << "3. modificar archivo inversor" << endl;
+        cout << "4. Eliminar " << endl;
+        cout << "5. consultar archivo inversor" << endl;
+        cout << "0. Salir" << endl;
+
+        cin >> op;
+
+        switch (op) {
+            case 1:
+                adicinar_inversor();
+                break; 
+
+            case 2:
+                listar_archivo_inversor();
+                break;
+
+            case 3:
+                listar_archivo_inversor();
+                
+                cout << "que  id de inversor desea modificar del archivo inversor? : ";
+                cin >> id;
+
+                modificar_archivo_inversor(id);
+                break;
+
+            case 4:
+                cout << "queinversordesea eliminar? : ";
+                cin >> id;
+                eliminar_logico_archivo_inversor(id);
+                break;
+
+            case 5:
+                cout << "que id inversor desea consultar del archivo inversor? : ";
+                cin >> id;
+                consultar_archivo_inversor(id);
+                break;
+
+            default:
+                break;
+        }
+
+    } while (op != 0); // 0 para salir
+}
+
+
+void adicinar_inversor () {
+    FILE *ptr;
+    inversor reg;
+
+    ptr = fopen("inversor.dat", "ab+"); // posiciona el puntero al final del archivo.
+
+    if (ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    }
+    else {
+        string d;
+
+        cout << " *** Datos de tarjeta *** " << endl;
+        cout << "Nombre: "; cin >> d;
+        cout << "Numero de cuenta: "; cin >> d;
+        cout << "Fecha de vencimiento: "; cin >> d;
+        cout << "CV: "; cin >> d;
+        
+        cout << endl << "Cuenta aceptada " << endl << endl;
+
+
+
+        reg.id = usuario_actual.id;
+
+        cout << "nombre inversor: ";
+        cin >> reg.nombre;
+
+        cout << "Nacionalidad: ";
+        cin >> reg.nacionalidad;
+
+        // cin.ignore();
+
+        cout << "Email: ";
+        cin >> reg.email;
+
+
+        cout << "Telefono: ";
+        cin >> reg.telefono;
+
+        cout << "Genero: ";
+        cin >> reg.genero;
+
+        reg.eliminado = false;
+
+        fwrite(&reg, sizeof(reg), 1, ptr);
+        fclose(ptr); 
+    }
+}
+
+void listar_archivo_inversor() {   // iterar sobre el archivo
+    FILE *ptr;
+    inversor reg; // variable auxiliar
+
+    ptr = fopen("inversor.dat", "rb+"); 
+
+    if (ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    }
+    else {
+
+        fread(&reg, sizeof(reg), 1, ptr);
+            
+        cout << " id  Nombre    Nacionlidad      Email                  Telefono      genero " << endl; // CABECERA
+        while ( !feof(ptr) ) 
+        {
+            if (!reg.eliminado) {
+                cout << setw(2) << reg.id << 
+                setw(8) << reg.nombre << 
+                setw(14) << reg.nacionalidad << 
+                setw(28) << reg.email << 
+                setw(12) << reg.telefono << 
+                setw(15) << reg.genero << endl;
+            }
+
+            fread(&reg, sizeof(reg), 1, ptr);
+        }
+
+        fclose(ptr);
+    }
+}
+
+int obtener_posicion_inversor(int id) 
+{    
+    FILE *ptr;
+    inversor reg;
+
+    int pos,cont=0;
+    ptr= fopen("gente.dat", "rb"); 
+
+    if (ptr == NULL) 
+    {
+        cout << "El archivo no existe" << endl;
+    }
+    else 
+    {    
+        fread(&reg, sizeof(reg), 1, ptr);
+        while ( !feof(ptr) && reg.id != id ) 
+        { 
+            cont++;
+           fread(&reg, sizeof(reg), 1, ptr);
+        }
+    }
+
+    return(cont);
+}
+
+void modificar_archivo_inversor (int id) {
+    FILE *ptr;
+   inversor nuevo_reg; 
+
+    int nro_reg = 0;
+    bool encontro = false;
+    
+    ptr = fopen("inversor.dat", "rb+"); 
+
+    if(ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    } 
+    else {
+            
+        fread(&nuevo_reg, sizeof(nuevo_reg), 1, ptr);
+            
+        while ( !feof(ptr) && !encontro) 
+        {
+            if (nuevo_reg.id == id)
+            {
+
+                cout << "nuevo nombre: ";
+                cin >> nuevo_reg.nombre;
+
+                cout << "nueva Nacionalidad: ";
+                cin >> nuevo_reg.nacionalidad;
+
+                // cin.ignore();
+
+                cout << "nuevo Email: ";
+                cin >> nuevo_reg.email;
+
+
+                cout << "nuevo Telefono: ";
+                cin >> nuevo_reg.telefono;
+
+                cout << "nuevo Genero: ";
+                cin >> nuevo_reg.genero;
+
+                nuevo_reg.eliminado = false;
+
+                encontro = true;
+                fseek(ptr, (nro_reg) * sizeof(nuevo_reg), SEEK_SET);
+                fwrite(&nuevo_reg, sizeof(nuevo_reg), 1, ptr);
+
+                cout << endl << "Modicidado exitosamente! " << endl << endl;  
+            }
+            else {
+                nro_reg++;
+                fread(&nuevo_reg, sizeof(nuevo_reg), 1, ptr);
+            }
+        }
+
+        fclose(ptr);     
+
+        if (!encontro) {
+            cout << "No existe esa inversor" << endl;
+        }
+    }
+
+}
+
+void eliminar_logico_archivo_inversor(int id) {
+    FILE *ptr;
+    inversor reg; 
+
+    int nro_reg = 0;
+    bool encontro = false;
+    
+    ptr = fopen("inversor.dat", "rb+"); 
+
+    if(ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    } 
+    else {
+            
+        fread(&reg, sizeof(reg), 1, ptr);
+            
+        while ( !feof(ptr) && !encontro) 
+        {
+            if (reg.id == id)
+            {
+                reg.eliminado = true;
+                encontro = true;
+                fseek(ptr, (nro_reg) * sizeof(reg), SEEK_SET);
+                fwrite(&reg, sizeof(reg), 1, ptr);
+
+                cout << endl << "Eliminado exitosamente! " << endl << endl;  
+            }
+            else {
+                nro_reg++;
+                fread(&reg, sizeof(reg), 1, ptr);
+            }
+        }
+
+        fclose(ptr);
+
+        if (!encontro) {
+            cout << "No existe esa inversor" << endl;
+        }
+    }
+}
+
+void consultar_archivo_inversor(int id) {
+    FILE *ptr;
+   inversor reg;
+
+    bool encontrado = false;
+
+    ptr = fopen("inversor.dat", "rb+"); 
+
+    if (ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    }
+    else {
+        
+        fread(&reg, sizeof(reg), 1, ptr);
+        while ( !feof(ptr) && !encontrado ) 
+        {
+            if (reg.id == id &&  !reg.eliminado) {
+                cout << "Id: " << reg.id << endl;
+                cout << "Nombre: " << reg.nombre << endl;
+                cout << "Nacionalidad: " << reg.nacionalidad << endl;
+                cout << "Email: " << reg.email << endl;
+                cout << "telefono:" << reg.telefono << endl;
+                cout << "Gener: " << reg.genero << endl;    
+                encontrado = true;
+            }
+            else { 
+                fread(&reg, sizeof(reg), 1, ptr);
+            }
+        }
+
+        fclose(ptr);
+    }
+}
+
+
+    // ptr = fopen("usuario.dat", "rb+"); // posiciona el puntero al final del archivo.
+
+    // if (ptr == NULL) {
+    //     cout << "el archivo no existe, se creara uno nuevo" << endl;
+    //     ptr = fopen("usuario.dat", "wb+");
+    // }
+
+    //     string lgn;
+    //     int cont = 0;
+    //     cout << "login: ";
+    //     cin >> lgn;
+
+    //     // verificar si el credencial eiste
+    //     fread(&reg, sizeof(reg), 1, ptr);
+    //     while ( !feof(ptr)) 
+    //     { 
+    //         if (reg.login == lgn)
+    //         {
+    //             cout << "Este user name ya esta siendo usado, por favor intente con otro" << endl;
+    //             fclose(ptr);
+    //             return;
+    //         }
+    //         cont++;
+
+    //         fread(&reg, sizeof(reg), 1, ptr);
+    //     }
+
+    //     reg.id = cont;
+
+    //     reg.login = lgn;
+
+
+
+
+void adicinar_proyecto () {
+    FILE *ptr;
+    proyecto reg;
+
+    ptr = fopen("proyecto.dat", "rb+"); // posiciona el puntero al final del archivo.
+
+    if (ptr == NULL) {
+        cout << "el archivo no existe" << endl;
+        ptr = fopen("proyecto.dat", "wb+");
+    }
+    else {
+        //reg.id = obtener_tam_proyecto
+
+        reg.id = usuario_actual.id;
+        cin.ignore();
+
+        cout << "Nombre del proyecto: ";
+        getline( cin, reg.nombre);
+
+		cout << endl << reg.nombre << "!" << endl;
+
+        cout << "Categoria: ";
+        getline (cin, reg.categoria);
+        // /cin.ignore();
+        cout << endl << reg.categoria << "!" << endl;
+
+        cout << "Descripcion: ";
+        getline (cin, reg.descripcion);
+        // cin.ignore();
+
+         cout << endl << reg.descripcion << "!" << endl;
+
+        cout << "Objetivo (BOB): ";
+        cin >> reg.objetivo;
+
+        reg.acumulado = 0;
+
+        reg.eliminado = false;
+
+        while ( !feof(ptr)) {
+            fread(&reg, sizeof(reg), 1, ptr);
+        }
+
+        fwrite(&reg, sizeof(reg), 1, ptr);
+        fclose(ptr); 
+    }
+}
+
+
+void listar_archivo_proyecto() {   // iterar sobre el archivo
+    FILE *ptr;
+    proyecto reg; // variable auxiliar
+
+    //ptr = fopen("proyecto.dat", "rb+"); 
+
+    if (ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    }
+    // else {
+
+    //     fread(&reg, sizeof(reg), 1, ptr);
+            
+    //     cout << " id proeycto      Nombre                Categoria " << endl; // CABECERA
+    //     while ( !feof(ptr) ) 
+    //     {
+    //         if (!reg.eliminado) {
+    //             cout << reg.id << 
+    //             "               "  << reg.nombre << 
+    //             "               " << reg.categoria << endl;
+    //             // setw(14) << reg.descripcion << 
+    //             // setw(28) << reg.objetivo << 
+    //             // setw(12) << reg.acumulado << endl;
+
+    //         }
+    //         fread(&reg, sizeof(reg), 1, ptr);
+    //     }
+    //     cout << endl;
+    //     fclose(ptr);
+    // }
+}
+
+int obtener_tam_proyecto() 
+{    
+    FILE *ptr;
+    proyecto reg;
+
+    int pos,cont=0;
+    ptr= fopen("proyecto.dat", "rb"); 
+
+    if (ptr == NULL) 
+    {
+        cout << "El archivo no existe" << endl;
+    }
+    else 
+    {    
+        fread(&reg, sizeof(reg), 1, ptr);
+        while ( !feof(ptr)) 
+        { 
+            cont++;
+           fread(&reg, sizeof(reg), 1, ptr);
+        }
+    }
+
+    return(cont);
+}
+
+void modificar_archivo_proyecto (int id) {
+    FILE *ptr;
+   proyecto nuevo_reg; 
+
+    int nro_reg = 0;
+    bool encontro = false;
+    
+    ptr = fopen("proyecto.dat", "rb+"); 
+
+    if(ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    } 
+    else {
+            
+        fread(&nuevo_reg, sizeof(nuevo_reg), 1, ptr);
+            
+        while ( !feof(ptr) && !encontro) 
+        {
+            if (nuevo_reg.id == id)
+            {
+
+                cout << "id: ";
+                cin >> nuevo_reg.id;
+
+                cout << "categoria: ";
+                cin >> nuevo_reg.categoria;
+
+                cout << "Descripcion: ";
+                getline (cin, nuevo_reg.descripcion);
+
+                cin.ignore();
+
+                cout << "Objetivo (BOB): ";
+                cin >> nuevo_reg.objetivo;
+
+                cout << "Acumulado (BOB): ";
+                cin >> nuevo_reg.acumulado;
+
+                nuevo_reg.eliminado = false;
+
+                encontro = true;
+                fseek(ptr, (nro_reg) * sizeof(nuevo_reg), SEEK_SET);
+                fwrite(&nuevo_reg, sizeof(nuevo_reg), 1, ptr);
+
+                cout << endl << "Modicidado exitosamente! " << endl << endl;  
+            }
+            else {
+                nro_reg++;
+                fread(&nuevo_reg, sizeof(nuevo_reg), 1, ptr);
+            }
+        }
+
+        fclose(ptr);     
+
+        if (!encontro) {
+            cout << "No existe ese proyecto" << endl;
+        }
+    }
+
+}
+
+void eliminar_logico_archivo_proyecto(int id) {
+    FILE *ptr;
+    proyecto reg; 
+
+    int nro_reg = 0;
+    bool encontro = false;
+    
+    ptr = fopen("proyecto.dat", "rb+"); 
+
+    if(ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    } 
+    else {
+            
+        fread(&reg, sizeof(reg), 1, ptr);
+            
+        while ( !feof(ptr) && !encontro) 
+        {
+            if (reg.id == id)
+            {
+                reg.eliminado = true;
+                encontro = true;
+                fseek(ptr, (nro_reg) * sizeof(reg), SEEK_SET);
+                fwrite(&reg, sizeof(reg), 1, ptr);
+
+                cout << endl << "Eliminado exitosamente! " << endl << endl;  
+            }
+            else {
+                nro_reg++;
+                fread(&reg, sizeof(reg), 1, ptr);
+            }
+        }
+
+        fclose(ptr);
+
+        if (!encontro) {
+            cout << "No existe ese proyecto" << endl;
+        }
+    }
+}
+
+
+void consultar_archivo_proyecto(int id) {
+    FILE *ptr;
+   proyecto reg;
+
+    bool encontrado = false;
+
+    ptr = fopen("proyecto.dat", "rb+"); 
+
+    if (ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    }
+    else {
+        
+        fread(&reg, sizeof(reg), 1, ptr);
+        while ( !feof(ptr) && !encontrado ) 
+        {
+            if (reg.id == id &&  !reg.eliminado) {
+                cout << " *** PROYECTO ***" << endl;
+                cout << "Id: " << reg.id << endl;
+                cout << "Nombre: " << reg.nombre << endl;
+                cout << "Categoria: " << reg.categoria << endl;
+                cout << "Descripcion: " << reg.descripcion << endl;
+                cout << "Objetivo: " << reg.objetivo << " Bs." <<  endl;
+                cout << "acumulado: " << reg.acumulado << endl;
+                encontrado = true;
+
+                //cout << "EMPRENDEDOR: ";
+                //cout << consultar_nombre_usuario(reg.id) << endl;
+            }
+            else { 
+                fread(&reg, sizeof(reg), 1, ptr);
+            }
+        }
+
+        cout << endl;
+        fclose(ptr);
+    }
+}
+
+
+
+
+void adicinar_inversion () {
+    FILE *ptr;
+    inversion reg;
+
+    ptr = fopen("inversion.dat", "ab+"); // posiciona el puntero al final del archivo.
+
+    if (ptr == NULL) {
+        cout << "el archivo no existe" << endl;
+    }
+    else {
+
+        reg.id = usuario_actual.id;
+
+        cout << "id_proyecto: ";
+        cin >> reg.id_proyecto;
+
+        // cout << "id_inversor: ";
+        // cin >> reg.id_inversor;
+        reg.id_inversor = usuario_actual.id;
+
+        cout << "monto inversion: ";
+        cin >> reg.monto_inversion;
+
+        reg.ganancia = reg.monto_inversion * 0.03;
+
+        reg.eliminado = false;
+
+        fwrite(&reg, sizeof(reg), 1, ptr);
+        fclose(ptr); 
+    }
+}
+
+    // int id;
+    // int id_proyecto;
+    // int id_inversor;
+    // float monto_inversion;
+    // float ganancia;
+    // bool eliminado;
+
+void listar_archivo_inversion() {   // iterar sobre el archivo
+    FILE *ptr;
+    inversion reg; // variable auxiliar
+
+    ptr = fopen("inversion.dat", "rb+"); 
+
+    if (ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    }
+    else {
+        float ganancia_acumulada = 0;
+
+        fread(&reg, sizeof(reg), 1, ptr);
+            
+        cout << " id   id_proyecto    id_inversor    Monto inversion (BOB)      Ganancia(BOB)" << endl; // CABECERA
+        while ( !feof(ptr) ) 
+        {
+            if (!reg.eliminado) {
+                cout << setw(2) << reg.id <<
+                setw(8) << reg.id_proyecto << 
+                setw(14) << reg.id_inversor << 
+                setw(20) << reg.monto_inversion << 
+                setw(25) << reg.ganancia << endl;
+            }
+
+            ganancia_acumulada += reg.ganancia;
+
+            fread(&reg, sizeof(reg), 1, ptr);
+        }   
+
+        cout << endl << "Ganancia acumulada: " <<  ganancia_acumulada << " BOB" << endl << endl;
+
+        fclose(ptr);
+    }
+}
+
+void listar_archivo_inversion(int id) {
+    FILE *ptr;
+    inversion reg; // variable auxiliar
+
+    ptr = fopen("inversion.dat", "rb+"); 
+
+    if (ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    }
+    else {
+
+        fread(&reg, sizeof(reg), 1, ptr);
+            
+        cout << " id   id_proyecto    id_inversor    Monto inversion (BOB)      Ganancia(BOB)" << endl; // CABECERA
+        while ( !feof(ptr) ) 
+        {
+            if (!reg.eliminado && reg.id == id) {
+                cout << setw(2) << reg.id <<
+                setw(8) << reg.id_proyecto << 
+                setw(14) << reg.id_inversor << 
+                setw(20) << reg.monto_inversion << 
+                setw(25) << reg.ganancia << endl;
+            }
+
+            fread(&reg, sizeof(reg), 1, ptr);
+        }
+
+        fclose(ptr);
+    }
+}
+
+
+int obtener_posicion_inversion(int id) 
+{    
+    FILE *ptr;
+    inversion reg;
+
+    int pos,cont=0;
+    ptr= fopen("inversion.dat", "rb"); 
+
+    if (ptr == NULL) 
+    {
+        cout << "El archivo no existe" << endl;
+    }
+    else 
+    {    
+        fread(&reg, sizeof(reg), 1, ptr);
+        while ( !feof(ptr) && reg.id != id ) 
+        { 
+            cont++;
+           fread(&reg, sizeof(reg), 1, ptr);
+        }
+    }
+
+    return(cont);
+}
+
+    // int id;
+    // int id_proyecto;
+    // int id_inversor;
+    // float monto_inversion;
+    // float ganancia;
+    // bool eliminado;
+
+void modificar_archivo_inversion (int id) {
+    FILE *ptr;
+    inversion nuevo_reg; 
+
+    int nro_reg = 0;
+    bool encontro = false;
+    
+    ptr = fopen("inversion.dat", "rb+"); 
+
+    if(ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    } 
+    else {
+            
+        fread(&nuevo_reg, sizeof(nuevo_reg), 1, ptr);
+            
+        while ( !feof(ptr) && !encontro) 
+        {
+            if (nuevo_reg.id == id)
+            {
+                cout << "nuevo id_proyecto: ";
+                cin >> nuevo_reg.id_proyecto;
+
+                cout << "nuevo id_inversor: ";
+                cin >> nuevo_reg.id_inversor;
+
+                cout << "nuevo monto de inversion: ";
+                cin >> nuevo_reg.monto_inversion;
+
+                nuevo_reg.ganancia = nuevo_reg.monto_inversion * 0.03;
+
+                nuevo_reg.eliminado = false;
+
+                encontro = true;
+                fseek(ptr, (nro_reg) * sizeof(nuevo_reg), SEEK_SET);
+                fwrite(&nuevo_reg, sizeof(nuevo_reg), 1, ptr);
+
+                cout << endl << "Modicidado exitosamente! " << endl << endl;  
+            }
+            else {
+                nro_reg++;
+                fread(&nuevo_reg, sizeof(nuevo_reg), 1, ptr);
+            }
+        }
+
+        fclose(ptr);     
+
+        if (!encontro) {
+            cout << "No existe esa inversor" << endl;
+        }
+    }
+
+}
+    // int id;
+    // int id_proyecto;
+    // int id_inversor;
+    // float monto_inversion;
+    // float ganancia;
+    // bool eliminado;
+void eliminar_logico_archivo_inversion(int id) {
+    FILE *ptr;
+    inversion reg; 
+
+    int nro_reg = 0;
+    bool encontro = false;
+    
+    ptr = fopen("inversion.dat", "rb+"); 
+
+    if(ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    } 
+    else {
+            
+        fread(&reg, sizeof(reg), 1, ptr);
+            
+        while ( !feof(ptr) && !encontro) 
+        {
+            if (reg.id == id)
+            {
+                reg.eliminado = true;
+                encontro = true;
+                fseek(ptr, (nro_reg) * sizeof(reg), SEEK_SET);
+                fwrite(&reg, sizeof(reg), 1, ptr);
+
+                cout << endl << "Eliminado exitosamente! " << endl << endl;  
+            }
+            else {
+                nro_reg++;
+                fread(&reg, sizeof(reg), 1, ptr);
+            }
+        }
+
+        fclose(ptr);
+
+        if (!encontro) {
+            cout << "No existe esa inversor" << endl;
+        }
+    }
+}
+
+    // int id;
+    // int id_proyecto;
+    // int id_inversor;
+    // float monto_inversion;
+    // float ganancia;
+    // bool eliminado;
+
+void consultar_archivo_inversion(int id) {
+    FILE *ptr;
+   inversion reg;
+
+    bool encontrado = false;
+
+    ptr = fopen("inversion.dat", "rb+"); 
+
+    if (ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    }
+    else {
+        
+        fread(&reg, sizeof(reg), 1, ptr);
+        while ( !feof(ptr) && !encontrado ) 
+        {
+            if (reg.id == id &&  !reg.eliminado) {
+                cout << "Id: " << reg.id << endl;
+                cout << "id proyecto: " << reg.id_proyecto << endl;
+                cout << "id nversor: " << reg.id_inversor << endl;
+                cout << "Monto: " << reg.monto_inversion << endl;
+                cout << "Ganancia:" << reg.ganancia << endl;
+                encontrado = true;
+            }
+            else { 
+                fread(&reg, sizeof(reg), 1, ptr);
+            }
+        }
+        fclose(ptr);
+    }
+}
+
+bool existe_usuario(string login)
+{
+    FILE *ptr;
+    usuario reg;
+
+    ptr = fopen("usuario.dat", "rb"); 
+
+    if (ptr == NULL)  {
+        cout << "El archivo no existe" << endl;
+    }
+    else {    
+        fread(&reg, sizeof(reg), 1, ptr);
+        while ( !feof(ptr) ) 
+        { 
+            if (reg.login == login)
+            {
+                fclose(ptr);
+                return true;
+            }
+           fread(&reg, sizeof(reg), 1, ptr);
+        }
+        fclose(ptr);
+    }
+
+    return false;
+}
+
+
+void adicinar_usuario () {
+    FILE *ptr;
+    usuario reg;
+
+    ptr = fopen("usuario.dat", "rb+");
+
+    if (ptr == NULL) {
+        cout << "el archivo no existe, se creara uno nuevo" << endl;
+        ptr = fopen("usuario.dat", "wb+");
+    }
+
+        string lgn;
+        int cont = 0;
+        cout << "login: ";
+        cin >> lgn;
+
+        // verificar si el credencial eiste
+        fread(&reg, sizeof(reg), 1, ptr);
+        while ( !feof(ptr)) 
+        { 
+            if (reg.login == lgn)
+            {
+                cout << "Este user name ya esta siendo usado, por favor intente con otro" << endl;
+                fclose(ptr);
+                return;
+            }
+            cont++;
+
+            fread(&reg, sizeof(reg), 1, ptr);
+        }
+
+        reg.id = cont;
+
+        reg.login = lgn;
+
+        cout << "password: ";
+        cin >> reg.password;
+
+        cout << "Seleccione tipo de usuario: " << endl;
+        cout << "1. Inversionista" << endl;
+        cout << "2. Emprendedor" << endl;
+        // cout << "3. Administrador" << endl;
+        cin >> reg.tipo_usurio;
+
+        if (reg.tipo_usurio == 1) {
+            adicinar_inversor();
+        }
+
+        reg.eliminado = false;
+
+        fwrite(&reg, sizeof(reg), 1, ptr);
+        fclose(ptr); 
+}
+
+    // int id;
+    // string login;
+    // string password;
+    // int tipo_usurio; // inversionista ,, emprendedor,, administrador
+    // bool eliminado;
+
+void listar_archivo_usuario() {   // iterar sobre el archivo
+    FILE *ptr;
+    usuario reg; // variable auxiliar
+
+    ptr = fopen("usuario.dat", "rb+"); 
+
+    if (ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    }
+    else {
+
+        fread(&reg, sizeof(reg), 1, ptr);
+            
+        cout << " id      login           password              tipo_usurio     " << endl; // CABECERA
+        while ( !feof(ptr) ) 
+        {
+            if (!reg.eliminado) {
+                cout << setw(2) << reg.id <<
+                setw(15) << reg.login << 
+                setw(14) << reg.password;
+                switch(reg.tipo_usurio) {
+                    case 1:
+                        cout << "\t\t\tInversionista" << endl;
+                        break;
+                    case 2:
+                        cout << "\t\t\tEmprendedor" << endl;
+                        break;
+                    case 3: 
+                        cout << "\t\t\tAdministrador" << endl;
+                        break;
+                }
+            }
+
+            fread(&reg, sizeof(reg), 1, ptr);
+        }
+
+        fclose(ptr);
+    }
+}
+
+int obtener_posicion_usuario(int id) 
+{    
+    FILE *ptr;
+    usuario reg;
+
+    int pos,cont=0;
+    ptr= fopen("usuario.dat", "rb"); 
+
+    if (ptr == NULL) 
+    {
+        cout << "El archivo no existe" << endl;
+    }
+    else 
+    {    
+        fread(&reg, sizeof(reg), 1, ptr);
+        while ( !feof(ptr) && reg.id != id ) 
+        { 
+            cont++;
+           fread(&reg, sizeof(reg), 1, ptr);
+        }
+    }
+
+    return(cont);
+}
+
+    // int id;
+    // string login;
+    // string password;
+    // int tipo_usurio; // inversionista ,, emprendedor,, administrador
+    // bool eliminado;
+
+void modificar_archivo_usuario (int id) {
+    FILE *ptr;
+    usuario nuevo_reg; 
+
+    int nro_reg = 0;
+    bool encontro = false;
+    
+    ptr = fopen("usuario.dat", "rb+"); 
+
+    if(ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    } 
+    else {
+            
+        fread(&nuevo_reg, sizeof(nuevo_reg), 1, ptr);
+            
+        while ( !feof(ptr) && !encontro) 
+        {
+            if (nuevo_reg.id == id)
+            {
+                cout << "nuevo login: ";
+                cin >> nuevo_reg.login;
+
+                while (existe_usuario(nuevo_reg.login)) {
+                    cout << "El usuario ya existe, intente nuevamente" << endl;
+                    cout << "nuevo login: ";
+                    cin >> nuevo_reg.login;
+                }
+
+                cout << "nuevo password: ";
+                cin >> nuevo_reg.password;
+
+                cout << "Seleccione neuvo tipo de usuario: " << endl;
+                cout << "1. Inversionista" << endl;
+                cout << "2. Emprendedor" << endl;
+                cout << "3. Administrador" << endl;
+
+                cin >> nuevo_reg.tipo_usurio;
+
+
+                encontro = true;
+                fseek(ptr, (nro_reg) * sizeof(nuevo_reg), SEEK_SET);
+                fwrite(&nuevo_reg, sizeof(nuevo_reg), 1, ptr);
+
+                cout << endl << "Modicidado exitosamente! " << endl << endl;  
+            }
+            else {
+                nro_reg++;
+                fread(&nuevo_reg, sizeof(nuevo_reg), 1, ptr);
+            }
+        }
+
+        fclose(ptr);     
+
+        if (!encontro) {
+            cout << "No existe esa inversor" << endl;
+        }
+    }
+
+}
+    // int id;
+    // string login;
+    // string password;
+    // int tipo_usurio; // inversionista ,, emprendedor,, administrador
+    // bool eliminado;
+void eliminar_logico_archivo_usuario(int id) {
+    FILE *ptr;
+    usuario reg; 
+
+    int nro_reg = 0;
+    bool encontro = false;
+    
+    ptr = fopen("usuario.dat", "rb+"); 
+
+    if(ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    } 
+    else {
+            
+        fread(&reg, sizeof(reg), 1, ptr);
+            
+        while ( !feof(ptr) && !encontro) 
+        {
+            if (reg.id == id)
+            {
+                reg.eliminado = true;
+                encontro = true;
+                fseek(ptr, (nro_reg) * sizeof(reg), SEEK_SET);
+                fwrite(&reg, sizeof(reg), 1, ptr);
+
+                cout << endl << "Eliminado exitosamente! " << endl << endl;  
+            }
+            else {
+                nro_reg++;
+                fread(&reg, sizeof(reg), 1, ptr);
+            }
+        }
+
+        fclose(ptr);
+
+        if (!encontro) {
+            cout << "No existe esa inversor" << endl;
+        }
+    }
+}
+
+    // int id;
+    // string login;
+    // string password;
+    // int tipo_usurio; // inversionista ,, emprendedor,, administrador
+    // bool eliminado;
+
+// string consultar_nombre_usuario(int id) {
+//     FILE *ptr;
+//    usuario reg;
+
+//     bool encontrado = false;
+
+//     ptr = fopen("usuario.dat", "rb+"); 
+
+//     if (ptr == NULL) {
+//         cout << "El archivo no existe" << endl;
+//     }
+//     else {
+        
+//         fread(&reg, sizeof(reg), 1, ptr);
+//         while ( !feof(ptr) && !encontrado ) 
+//         {
+//             if (reg.id == id &&  !reg.eliminado) {
+//                 fclose(ptr);
+//                 return reg.nombre;
+//             }
+//             else { 
+//                 fread(&reg, sizeof(reg), 1, ptr);
+//             }
+//         }
+//         fclose(ptr);
+//     }
+
+//     return "El usuario no existe" << endl;
+// }
+
+void consultar_archivo_usuario(int id) {
+    FILE *ptr;
+   usuario reg;
+
+    bool encontrado = false;
+
+    ptr = fopen("usuario.dat", "rb+"); 
+
+    if (ptr == NULL) {
+        cout << "El archivo no existe" << endl;
+    }
+    else {
+        
+        fread(&reg, sizeof(reg), 1, ptr);
+        while ( !feof(ptr) && !encontrado ) 
+        {
+            if (reg.id == id &&  !reg.eliminado) {
+                cout << " *** USUARIO *** " << endl;
+                cout << "Id: " << reg.id << endl;
+                cout << "Login: " << reg.login << endl;
+                cout << "password: " << "****" << endl;
+                cout << "Tipo de usuario: " << reg.tipo_usurio << endl;
+                encontrado = true;
+            }
+            else { 
+                fread(&reg, sizeof(reg), 1, ptr);
+            }
+        }
+        cout << endl;
+        fclose(ptr);
+    }
+}
